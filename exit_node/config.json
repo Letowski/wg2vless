@@ -1,0 +1,51 @@
+{
+  "inbounds": [
+    {
+      "port": 443,
+      "protocol": "vless",
+      "settings": {
+        "clients": [
+          {
+            "id": "XRAY_UUID",
+            "flow": "xtls-rprx-vision"
+          }
+        ],
+        "decryption": "none"
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "show": false,
+          "dest": "XRAY_SITE:443",
+          "fingerprint": "chrome",
+          "xver": 0,
+          "serverNames": [
+            "XRAY_SITE"
+          ],
+          "privateKey": "XRAY_PRIVATE",
+          "shortIds": [
+            "XRAY_SHORT"
+          ]
+        }
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",
+      "settings": {}
+    }
+  ],
+  "routing": {
+    "rules": [
+      {
+        "type": "field",
+        "domain": [
+          "XRAY_SITE"
+        ],
+        "outboundTag": "freedom"
+      }
+    ]
+  }
+}
