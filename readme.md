@@ -2,16 +2,11 @@
 ### before installation:
     IP_ENTER=<ip of enter node>
     IP_EXIT=<ip of exit node>
-### during installation:
-    XRAY_SITE=<pseudo-hostname for xray>
-    XRAY_UUID=<unique uuid for xray>
-    XRAY_PRIVATE
-    XRAY_SHORT
 
 ## Sever one (exit node):
 ### 1) install debian 12:
     apt update
-    apt -y install git
+    apt install -y git curl
     git clone https://github.com/Letowski/wg2vless.git
     cd wg2vless
     touch info.txt
@@ -25,14 +20,14 @@
     ln -s /usr/local/go/bin/go /bin/go
     go version
 ### 3) install RealiTLScanner and set XRAY_SITE
-    apt install -y git curl
     git clone https://github.com/XTLS/RealiTLScanner.git
     cd RealiTLScanner/
     go build
     export IP_EXIT=$(curl ipinfo.io/ip)
-    ./RealiTLScanner -addr $IP_EXIT -port 443 -timeout 5 -out scanner.csv
+    timeout 30s ./RealiTLScanner -addr $IP_EXIT -port 443 -timeout 5 -out sites.csv
+    export XRAY_SITE=$(tail -1 sites.csv | cut -d ',' -f3)
+    rm sites.csv
     cd ..
-    export XRAY_SITE=<site for xray>
     echo "IP_EXIT="$IP_EXIT >> info.txt
     echo "XRAY_SITE="$XRAY_SITE >> info.txt
 ### 4) generate uuid:
@@ -46,9 +41,9 @@
     export XRAY_KEYS=$(/usr/local/bin/xray x25519)
     export XRAY_PRIVATE=${XRAY_KEYS:13:43}
     export XRAY_PUBLIC=${XRAY_KEYS:69:43}
+    export XRAY_SHORT=${XRAY_UUID:0:8}${XRAY_UUID:0:8}
     echo "XRAY_PRIVATE="$XRAY_PRIVATE >> info.txt
     echo "XRAY_PUBLIC="$XRAY_PUBLIC >> info.txt
-    export XRAY_SHORT=${XRAY_UUID:0:8}${XRAY_UUID:0:8}
     echo "XRAY_SHORT="$XRAY_SHORT >> info.txt
 ### 6) check envs
     echo $IP_EXIT
@@ -66,6 +61,8 @@
     cp exit_node/config.json /usr/local/etc/xray/config.json
     systemctl restart xray
     systemctl status xray
+### 8) node is ready
+    cat info.txt
 
 ## Server two (enter node):
 ### 1) install debian 12:
