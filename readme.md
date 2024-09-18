@@ -112,6 +112,18 @@
     echo "deb [signed-by=/etc/apt/keyrings/v2raya.asc] https://apt.v2raya.org/ v2raya main" | tee /etc/apt/sources.list.d/v2raya.list
     apt update
     apt install -y v2raya v2ray
+### 6) install xray
+    bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u root
+    timeout 5s systemctl status xray
+### 7) configure xray
+    rm /usr/local/etc/xray/config.json
+    sed -i -e "s/XRAY_UUID/$XRAY_UUID/g" enter_node/config.json
+    sed -i -e "s/XRAY_SITE/$XRAY_SITE/g" enter_node/config.json
+    sed -i -e "s/XRAY_PRIVATE/$XRAY_PRIVATE/g" enter_node/config.json
+    sed -i -e "s/XRAY_SHORT/$XRAY_SHORT/g" enter_node/config.json
+    cp enter_node/config.json /usr/local/etc/xray/config.json
+    systemctl restart xray
+    timeout 5s systemctl status xray
 ### 99) show client config
     cat enter_node/wg_client.conf
 
