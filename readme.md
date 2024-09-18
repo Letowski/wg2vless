@@ -36,7 +36,7 @@
     echo "export XRAY_UUID="$XRAY_UUID >> info.txt
 ### 5) install xray
     bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u root
-    systemctl status xray
+    timeout 5s systemctl status xray
 ### 6) generate keys
     export XRAY_KEYS=$(/usr/local/bin/xray x25519)
     export XRAY_PRIVATE=${XRAY_KEYS:13:43}
@@ -45,14 +45,14 @@
     echo "export XRAY_PRIVATE="$XRAY_PRIVATE >> info.txt
     echo "export XRAY_PUBLIC="$XRAY_PUBLIC >> info.txt
     echo "export XRAY_SHORT="$XRAY_SHORT >> info.txt
-### 6) check envs
+### 7) check envs
     echo $IP_EXIT
     echo $XRAY_SITE
     echo $XRAY_UUID
     echo $XRAY_PRIVATE
     echo $XRAY_PUBLIC
     echo $XRAY_SHORT
-### 7) configure xray
+### 8) configure xray
     rm /usr/local/etc/xray/config.json
     sed -i -e "s/XRAY_UUID/$XRAY_UUID/g" exit_node/config.json
     sed -i -e "s/XRAY_SITE/$XRAY_SITE/g" exit_node/config.json
@@ -60,8 +60,8 @@
     sed -i -e "s/XRAY_SHORT/$XRAY_SHORT/g" exit_node/config.json
     cp exit_node/config.json /usr/local/etc/xray/config.json
     systemctl restart xray
-    systemctl status xray
-### 8) node is ready
+    timeout 5s systemctl status xray
+### 9) node is ready
     cat info.txt
 
 ## Server two (enter node):
