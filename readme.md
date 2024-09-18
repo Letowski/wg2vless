@@ -28,12 +28,12 @@
     export XRAY_SITE=$(tail -1 sites.csv | cut -d ',' -f3)
     rm sites.csv
     cd ..
-    echo "IP_EXIT="$IP_EXIT >> info.txt
-    echo "XRAY_SITE="$XRAY_SITE >> info.txt
+    echo "export IP_EXIT="$IP_EXIT >> info.txt
+    echo "export XRAY_SITE="$XRAY_SITE >> info.txt
 ### 4) generate uuid:
     apt install uuid -y
     export XRAY_UUID=$(uuid -v 4)
-    echo "XRAY_UUID="$XRAY_UUID >> info.txt
+    echo "export XRAY_UUID="$XRAY_UUID >> info.txt
 ### 5) install xray
     bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u root
     systemctl status xray
@@ -42,9 +42,9 @@
     export XRAY_PRIVATE=${XRAY_KEYS:13:43}
     export XRAY_PUBLIC=${XRAY_KEYS:69:43}
     export XRAY_SHORT=${XRAY_UUID:0:8}${XRAY_UUID:0:8}
-    echo "XRAY_PRIVATE="$XRAY_PRIVATE >> info.txt
-    echo "XRAY_PUBLIC="$XRAY_PUBLIC >> info.txt
-    echo "XRAY_SHORT="$XRAY_SHORT >> info.txt
+    echo "export XRAY_PRIVATE="$XRAY_PRIVATE >> info.txt
+    echo "export XRAY_PUBLIC="$XRAY_PUBLIC >> info.txt
+    echo "export XRAY_SHORT="$XRAY_SHORT >> info.txt
 ### 6) check envs
     echo $IP_EXIT
     echo $XRAY_SITE
@@ -68,7 +68,10 @@
 ### 1) install debian 12:
     apt update
     apt -y install git 
-### 2) install tun2socks:
+### 2) set envs
+    copy console output of last command (cat info.txt) from exit_node
+    and past (and execute) it in the console of ented_node
+### 3) install tun2socks:
     wget https://github.com/xjasonlyu/tun2socks/releases/download/v2.5.2/tun2socks-linux-amd64-v3.zip
     apt -y install unzip
     unzip tun2socks-linux-amd64-v3.zip
