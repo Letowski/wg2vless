@@ -14,6 +14,7 @@
     apt -y install git
     git clone https://github.com/Letowski/wg2vless.git
     cd wg2vless
+    touch info.txt
 ### 2) install golang
     wget https://go.dev/dl/go1.22.5.linux-amd64.tar.gz
     tar -xvf go1.22.5.linux-amd64.tar.gz -C /usr/local
@@ -29,16 +30,34 @@
     cd RealiTLScanner/
     go build
     export IP_EXIT=$(curl ipinfo.io/ip)
-    ./RealiTLScanner -addr $IP_EXIT -port 443 -timeout 30
+    ./RealiTLScanner -addr $IP_EXIT -port 443 -timeout 5 -out scanner.csv
+    cd ..
     export XRAY_SITE=<site for xray>
+    echo "IP_EXIT="$IP_EXIT >> info.txt
+    echo "XRAY_SITE="$XRAY_SITE >> info.txt
 ### 4) generate uuid:
     apt install uuid -y
     export XRAY_UUID=$(uuid -v 4)
-    echo $XRAY_UUID
+    echo "XRAY_UUID="$XRAY_UUID >> info.txt
 ### 5) install xray
     bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u root
     systemctl status xray
-### 6) configure xray
+### 6) generate keys
+    export XRAY_KEYS=$(/usr/local/bin/xray x25519)
+    export XRAY_PRIVATE=${XRAY_KEYS:13:43}
+    export XRAY_PUBLIC=${XRAY_KEYS:69:43}
+    echo "XRAY_PRIVATE="$XRAY_PRIVATE >> info.txt
+    echo "XRAY_PUBLIC="$XRAY_PUBLIC >> info.txt
+    export XRAY_SHORT=${XRAY_UUID:0:8}${XRAY_UUID:0:8}
+    echo "XRAY_SHORT="$XRAY_SHORT >> info.txt
+### 6) check envs
+    echo $IP_EXIT
+    echo $XRAY_SITE
+    echo $XRAY_UUID
+    echo $XRAY_PRIVATE
+    echo $XRAY_PUBLIC
+    echo $XRAY_SHORT
+### 7) configure xray
     rm /usr/local/etc/xray/config.json
     sed -i -e "s/XRAY_UUID/$XRAY_UUID/g" exit_node/config.json
     sed -i -e "s/XRAY_SITE/$XRAY_SITE/g" exit_node/config.json
