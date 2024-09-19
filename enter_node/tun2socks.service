@@ -8,6 +8,7 @@ PermissionsStartOnly=true
 ExecStartPre=-/usr/sbin/ip tuntap add mode tun dev tun0
 ExecStartPre=/usr/sbin/ip addr add 10.255.0.1/24 dev tun0
 ExecStartPre=/usr/sbin/ip link set dev tun0 up
+ExecStartPre=/bin/sh -c '[ $(grep -c "^210 v2ray$" /etc/iproute2/rt_tables) -eq 0 ] && echo "210 v2ray" >> /etc/iproute2/rt_tables || true'
 ExecStartPre=-/usr/sbin/ip route add default dev tun0 table 210
 ExecStart=/bin/tun2socks -device tun://tun0 -proxy socks5://127.0.0.1:20170
 ExecStopPost=-/usr/sbin/ip route del default dev tun0 table 210
