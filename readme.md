@@ -112,7 +112,7 @@
     wget -qO - https://apt.v2raya.org/key/public-key.asc | tee /etc/apt/keyrings/v2raya.asc
     echo "deb [signed-by=/etc/apt/keyrings/v2raya.asc] https://apt.v2raya.org/ v2raya main" | tee /etc/apt/sources.list.d/v2raya.list
     apt update
-    apt install -y v2raya v2ray
+    apt install -y v2raya v2ray --allow-unauthenticated
 ### 6) install xray
     bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u root
 ### 7) configure xray
