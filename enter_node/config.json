@@ -1,63 +1,72 @@
 {
-  "log": {
-    "loglevel": "info"
-  },
-  "routing": {
-    "rules": [],
-    "domainStrategy": "AsIs"
-  },
   "inbounds": [
     {
-      "port": 443,
-      "protocol": "vless",
-      "tag": "vless_tls",
-      "settings": {
-        "clients": [
-          {
-            "id": "XRAY_UUID",
-            "email": "user1@myserver",
-            "flow": "xtls-rprx-vision"
-          }
-        ],
-        "decryption": "none"
-      },
-      "streamSettings": {
-        "network": "tcp",
-        "security": "reality",
-		"realitySettings": {
-			"show": false,
-			"dest": "XRAY_SITE:443",
-			"xver": 0,
-			"serverNames": [
-				"XRAY_SITE"
-			],
-			"privateKey": "XRAY_PRIVATE",
-			"minClientVer": "",
-            "fingerprint": "chrome",
-			"maxClientVer": "",
-			"maxTimeDiff": 0,
-			"shortIds": [
-				"XRAY_SHORT"
-			]
-		}
-      },
+      "port": 20170,
+      "protocol": "socks",
+      "listen": "127.0.0.1",
       "sniffing": {
-        "enabled": true,
-        "destOverride": [
-          "http",
-          "tls"
-        ]
-      }
+        "enabled": false,
+        "destOverride": ["http", "tls"],
+        "metadataOnly": false
+      },
+      "settings": {
+        "auth": "noauth",
+        "udp": true
+      },
+      "streamSettings": null,
+      "tag": "socks_ipv4"
     }
   ],
   "outbounds": [
     {
-      "protocol": "freedom",
-      "tag": "direct"
+      "tag": "proxy",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "IP_EXIT",
+            "port": 443,
+            "users": [
+              {
+                "id": "XRAY_UUID",
+                "encryption": "none",
+                "flow": "xtls-rprx-vision"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "XRAY_SITE",
+          "fingerprint": "chrome",
+          "publicKey": "XRAY_PUBLIC",
+          "shortId": "XRAY_SHORT"
+        },
+        "sockopt": {}
+      }
     },
     {
-      "protocol": "blackhole",
-      "tag": "block"
+      "tag": "direct",
+      "protocol": "freedom",
+      "settings": {
+        "domainStrategy": "UseIP"
+      },
+      "streamSettings": {
+        "sockopt": {}
+      }
     }
-  ]
+  ],
+  "routing": {
+    "domainStrategy": "IPOnDemand",
+    "rules": [
+      {
+        "type": "field",
+        "outboundTag": "proxy",
+        "port": "0-65535"
+      }
+    ]
+  }
 }

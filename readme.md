@@ -117,9 +117,10 @@
     timeout 5s systemctl status xray
 ### 7) configure xray
     rm /usr/local/etc/xray/config.json
+    sed -i -e "s/IP_EXIT/$IP_EXIT/g" enter_node/config.json
     sed -i -e "s/XRAY_UUID/$XRAY_UUID/g" enter_node/config.json
     sed -i -e "s/XRAY_SITE/$XRAY_SITE/g" enter_node/config.json
-    sed -i -e "s/XRAY_PRIVATE/$XRAY_PRIVATE/g" enter_node/config.json
+    sed -i -e "s/XRAY_PUBLIC/$XRAY_PUBLIC/g" enter_node/config.json
     sed -i -e "s/XRAY_SHORT/$XRAY_SHORT/g" enter_node/config.json
     cp enter_node/config.json /usr/local/etc/xray/config.json
     systemctl restart xray
