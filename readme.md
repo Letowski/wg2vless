@@ -127,6 +127,14 @@
     cp enter_node/config.json /usr/local/etc/xray/config.json
     systemctl restart xray
     timeout 5s systemctl status xray
+### 8) configure routing
+    iptables -A FORWARD -i wg0 -j ACCEPT
+    iptables -t nat -A POSTROUTING -o ens3 -j MASQUERADE
+    iptables -t nat -A POSTROUTING -o tun0 -j MASQUERADE
+    netfilter-persistent save
+    ip route add default dev tun0 table v2ray metric 200
+    chmod +x routes.sh
+    ./routes.sh
 ### 99) show client config
     cat enter_node/wg_client.conf
 
