@@ -6,7 +6,7 @@
 ## Sever one (exit node):
 ### 1) prepare system:
     apt update
-    apt install -y git curl uuid
+    apt install -y git curl uuid iptables iptables-persistent wget tcpdump 
     git clone https://github.com/Letowski/wg2vless.git
     cd wg2vless
     touch info.txt
@@ -66,7 +66,7 @@
 ## Server two (enter node):
 ### 1) prepare system:
     apt update
-    apt -y install git curl unzip wireguard iptables iptables-persistent net-tools
+    apt -y install git curl unzip wireguard iptables iptables-persistent wget tcpdump
     git clone https://github.com/Letowski/wg2vless.git
     cd wg2vless
     touch info.txt
@@ -74,12 +74,11 @@
     copy console output of last command (cat info.txt) from exit_node
     and past (and execute) it in the console of ented_node
 ### 3) install tun2socks:
-    wget https://github.com/xjasonlyu/tun2socks/releases/download/v2.5.2/tun2socks-linux-amd64-v3.zip
-    unzip tun2socks-linux-amd64-v3.zip
-    chmod +x ./tun2socks-linux-amd64-v3
-    mv ./tun2socks-linux-amd64-v3 /bin/tun2socks
-    rm tun2socks-linux-amd64-v3.zip
-    echo "210 v2ray" >> /etc/iproute2/rt_tables
+    wget https://github.com/xjasonlyu/tun2socks/releases/download/v2.5.2/tun2socks-linux-amd64.zip
+    unzip tun2socks-linux-amd64.zip
+    chmod +x ./tun2socks-linux-amd64
+    mv ./tun2socks-linux-amd64 /bin/tun2socks
+    rm tun2socks-linux-amd64.zip
     cp enter_node/tun2socks.service /etc/systemd/system/tun2socks.service
     service tun2socks start
 ### 4) enable port forwarding:
@@ -108,14 +107,9 @@
     sed -i -e "s/WG_SERVER_PUBLIC/$(echo $WG_SERVER_PUBLIC | sed "s/\//\\\\\//g")/g" enter_node/wg_client.conf
     sed -i -e "s/IP_ENTER/$IP_ENTER/g" enter_node/wg_client.conf
     wg-quick up wg0
-### 5) install v2rayA:
-    wget -qO - https://apt.v2raya.org/key/public-key.asc | tee /etc/apt/keyrings/v2raya.asc
-    echo "deb [signed-by=/etc/apt/keyrings/v2raya.asc] https://apt.v2raya.org/ v2raya main" | tee /etc/apt/sources.list.d/v2raya.list
-    apt update
-    apt install -y v2raya v2ray --allow-unauthenticated
-### 6) install xray
+### 5) install xray
     bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u root
-### 7) configure xray
+### 6) configure xray
     rm /usr/local/etc/xray/config.json
     sed -i -e "s/IP_EXIT/$IP_EXIT/g" enter_node/config.json
     sed -i -e "s/XRAY_UUID/$XRAY_UUID/g" enter_node/config.json
@@ -125,12 +119,13 @@
     cp enter_node/config.json /usr/local/etc/xray/config.json
     systemctl restart xray
     timeout 5s systemctl status xray
-### 8) configure routing
+### 7) configure routing
     iptables -A FORWARD -i wg0 -j ACCEPT
-    iptables -t nat -A POSTROUTING -o ens3 -j MASQUERADE
+    export INTERFACE=$(ip a | grep -e "eth" -e "ens" | head -n1 | awk '{print $2}' | cut -d':' -f1)
+    echo $INTERFACE
+    iptables -t nat -A POSTROUTING -o $INTERFACE -j MASQUERADE
     iptables -t nat -A POSTROUTING -o tun0 -j MASQUERADE
     netfilter-persistent save
-    ip route add default dev tun0 table v2ray metric 200
     chmod +x routes.sh
     ./routes.sh
 ### 99) show client config
