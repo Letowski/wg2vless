@@ -81,6 +81,8 @@
     tun2socks --v
     rm tun2socks-linux-amd64-v3.zip
     echo "210 v2ray" >> /etc/iproute2/rt_tables
+    cp enter_node/tun2socks.service /etc/systemd/system/tun2socks.service
+    service tun2socks start
 ### 4) enable port forwarding:
     echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf
     sysctl -p
