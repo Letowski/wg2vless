@@ -78,7 +78,6 @@
     unzip tun2socks-linux-amd64-v3.zip
     chmod +x ./tun2socks-linux-amd64-v3
     mv ./tun2socks-linux-amd64-v3 /bin/tun2socks
-    tun2socks --v
     rm tun2socks-linux-amd64-v3.zip
     echo "210 v2ray" >> /etc/iproute2/rt_tables
     cp enter_node/tun2socks.service /etc/systemd/system/tun2socks.service
@@ -102,11 +101,11 @@
     echo "export WG_SERVER_PUBLIC="$WG_SERVER_PUBLIC >> info.txt
     echo "export WG_CLIENT_PUBLIC="$WG_CLIENT_PUBLIC >> info.txt
     echo "export WG_CLIENT_PRIVATE="$WG_CLIENT_PRIVATE >> info.txt
-    sed -i -e "s/WG_SERVER_PRIVATE/$WG_SERVER_PRIVATE/g" enter_node/wg0.conf
-    sed -i -e "s/WG_CLIENT_PUBLIC/$WG_CLIENT_PUBLIC/g" enter_node/wg0.conf
+    sed -i -e "s/WG_SERVER_PRIVATE/$(echo $WG_SERVER_PRIVATE | sed "s/\//\\\\\//g")/g" enter_node/wg0.conf
+    sed -i -e "s/WG_CLIENT_PUBLIC/$(echo $WG_CLIENT_PUBLIC | sed "s/\//\\\\\//g")/g" enter_node/wg0.conf
     cp enter_node/wg0.conf /etc/wireguard/wg0.conf
-    sed -i -e "s/WG_CLIENT_PRIVATE/$WG_CLIENT_PRIVATE/g" enter_node/wg_client.conf
-    sed -i -e "s/WG_SERVER_PUBLIC/$WG_SERVER_PUBLIC/g" enter_node/wg_client.conf
+    sed -i -e "s/WG_CLIENT_PRIVATE/$(echo $WG_CLIENT_PRIVATE | sed "s/\//\\\\\//g")/g" enter_node/wg_client.conf
+    sed -i -e "s/WG_SERVER_PUBLIC/$(echo $WG_SERVER_PUBLIC | sed "s/\//\\\\\//g")/g" enter_node/wg_client.conf
     sed -i -e "s/IP_ENTER/$IP_ENTER/g" enter_node/wg_client.conf
     wg-quick up wg0
 ### 5) install v2rayA:
@@ -116,7 +115,6 @@
     apt install -y v2raya v2ray
 ### 6) install xray
     bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u root
-    timeout 5s systemctl status xray
 ### 7) configure xray
     rm /usr/local/etc/xray/config.json
     sed -i -e "s/IP_EXIT/$IP_EXIT/g" enter_node/config.json
