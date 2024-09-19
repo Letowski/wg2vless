@@ -66,7 +66,7 @@
 ## Server two (enter node):
 ### 1) prepare system:
     apt update
-    apt -y install git curl unzip wireguard iptables iptables-persistent
+    apt -y install git curl unzip wireguard iptables iptables-persistent net-tools
     git clone https://github.com/Letowski/wg2vless.git
     cd wg2vless
     touch info.txt
