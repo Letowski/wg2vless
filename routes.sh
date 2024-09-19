@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 search_dir=routes
-for filename in "$search_dir"/*
+for filename in "$search_dir"/*.txt
 do
   echo "file = $filename"
   while read -r line; do
