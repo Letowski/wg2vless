@@ -77,7 +77,7 @@
     wget https://github.com/xjasonlyu/tun2socks/releases/download/v2.5.2/tun2socks-linux-amd64.zip
     unzip tun2socks-linux-amd64.zip
     chmod +x ./tun2socks-linux-amd64
-    mv ./tun2socks-linux-amd64 /bin/tun2socks
+    mv ./tun2socks-linux-amd64 /usr/local/bin/tun2socks
     rm tun2socks-linux-amd64.zip
     cp enter_node/tun2socks.service /etc/systemd/system/tun2socks.service
     service tun2socks start
