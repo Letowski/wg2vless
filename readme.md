@@ -1,4 +1,4 @@
-# WANRNING: routes are outdated. use your own instead
+# WARNING: routes are outdated. use your own instead
 # 2 steps nextgen vpn
 
 ## Requirements
