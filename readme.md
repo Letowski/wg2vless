@@ -1,9 +1,10 @@
+# WANRNING: routes are outdated. use your own instaed
 # 2 steps nextgen vpn
 
 ## Requirements
 2 debian 12 (minimal) instances (1 core, 400+mb ram, 3+gb storage, unlimited traffic)
 
-## Sever one (exit node):
+## Server one (exit node):
 ### 1) prepare system:
     apt update
     apt install -y git curl uuid iptables iptables-persistent wget tcpdump 
