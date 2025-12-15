@@ -37,7 +37,7 @@
 ### 5) install xray
     bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u root
     timeout 5s systemctl status xray
-### 6) generate keys
+### 6) generate keys (there can be troubles with positions in XRAY_KEYS so change numbers if need)
     export XRAY_KEYS=$(/usr/local/bin/xray x25519)
     export XRAY_PRIVATE=${XRAY_KEYS:13:43}
     export XRAY_PUBLIC=${XRAY_KEYS:69:43}
