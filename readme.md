@@ -108,9 +108,9 @@
     sed -i -e "s/WG_SERVER_PUBLIC/$(echo $WG_SERVER_PUBLIC | sed "s/\//\\\\\//g")/g" enter_node/wg_client.conf
     sed -i -e "s/IP_ENTER/$IP_ENTER/g" enter_node/wg_client.conf
     wg-quick up wg0
-### 5) install xray
+### 6) install xray
     bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u root
-### 6) configure xray
+### 7) configure xray
     rm /usr/local/etc/xray/config.json
     sed -i -e "s/IP_EXIT/$IP_EXIT/g" enter_node/config.json
     sed -i -e "s/XRAY_UUID/$XRAY_UUID/g" enter_node/config.json
@@ -120,7 +120,7 @@
     cp enter_node/config.json /usr/local/etc/xray/config.json
     systemctl restart xray
     timeout 5s systemctl status xray
-### 7) configure routing
+### 8) configure routing
     iptables -A FORWARD -i wg0 -j ACCEPT
     export INTERFACE=$(ip a | grep -e "eth" -e "ens" | head -n1 | awk '{print $2}' | cut -d':' -f1)
     echo $INTERFACE
@@ -129,7 +129,7 @@
     netfilter-persistent save
     chmod +x routes.sh
     ./routes.sh
-### 99) show client config
+### 9) show client config
     cat enter_node/wg_client.conf
 
 
